@@ -1,4 +1,5 @@
-### Hi there 👋
+<a href="https://github.com/Backas" target="_blank">
+    <img src="https://github-readme-stats.vercel.app/api?username=Backas03&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight" alt="Backas's GitHub stats"/>
 
 <!--
 **Backas03/Backas03** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
