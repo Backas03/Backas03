@@ -4,7 +4,7 @@
     <img src="https://github-readme-stats.vercel.app/api?username=Backas03&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight" alt="Backas03's GitHub stats"/>
 <br/>
 <a href="https://github.com/Backas03" target="_blank">
-    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Backas&layout=compact&show_icons=true&theme=tokyonight" alt="Top Langs"/>
+    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Backas03&layout=compact&show_icons=true&theme=tokyonight" alt="Top Langs"/>
 </a>
 
 <!--
