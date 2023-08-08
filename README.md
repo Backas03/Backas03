@@ -1,4 +1,4 @@
-#### Hello. I mainly develop Minecraft plugins and Discord bots
+### Hello. I mainly develop Minecraft plugins and Discord bots
 
 <a href="https://github.com/Backas03" target="_blank">
     <img src="https://github-readme-stats.vercel.app/api?username=Backas03&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight" alt="Backas03's GitHub stats"/>
