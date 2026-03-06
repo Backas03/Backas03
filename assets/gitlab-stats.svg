@@ -25,15 +25,12 @@
     .foot { fill: #7d8590; font: 400 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
   </style>
 
-  <!-- Background -->
   <rect class="bg" x="0" y="0" width="495" height="270" rx="16"/>
   <rect class="card" x="10" y="10" width="475" height="250" rx="14"/>
 
-  <!-- Header -->
   <text class="title" x="28" y="42">GitLab Activity</text>
   <text class="sub" x="28" y="64">@backas</text>
 
-  <!-- Stats -->
   <text class="label commit" x="28" y="104">Commits</text>
   <text class="value" x="28" y="132">8354</text>
 
@@ -46,16 +43,13 @@
   <text class="label project" x="250" y="170">Projects</text>
   <text class="value" x="250" y="198">12</text>
 
-  <!-- Divider -->
   <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
-  <!-- Meta -->
   <text class="metaLabel" x="28" y="232">Last commit:</text>
   <text class="metaValue" x="105" y="232">feat(wip): chat channel impl</text>
 
   <text class="metaLabel" x="28" y="248">Last activity:</text>
   <text class="metaValue" x="105" y="248">6d ago</text>
 
-  <!-- Footer -->
-  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-03-06 23:05 UTC</text>
+  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-03-06 23:42 UTC</text>
 </svg>
