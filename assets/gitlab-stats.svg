@@ -49,11 +49,11 @@
   <line class="divider" x1="28" y1="216" x2="467" y2="216"/>
 
   <!-- Meta -->
-  <text class="metaLabel" x="28" y="236">Last commit</text>
+  <text class="metaLabel" x="28" y="236">Last commit:</text>
   <text class="metaValue" x="105" y="236" style="font-size: 10px;">feat(wip): chat channel impl</text>
 
-  <text class="metaLabel" x="28" y="252">Last activity</text>
+  <text class="metaLabel" x="28" y="252">Last activity:</text>
   <text class="metaValue" x="105" y="252" style="font-size: 10px;">6d ago</text>
 
-  <text class="foot" x="467" y="252" text-anchor="end">Updated at 2026-03-06 20:45 UTC</text>
+  <text class="foot" x="467" y="252" text-anchor="end">Updated At 2026-03-06 20:47 UTC</text>
 </svg>
