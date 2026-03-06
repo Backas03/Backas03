@@ -355,7 +355,7 @@ jobs:
                             <text class="metaValue" x="105" y="248">%s</text>
                           
                             <!-- Footer -->
-                            <text class="foot" x="467" y="253" text-anchor="end">Updated at %s</text>
+                            <text class="foot" x="467" y="251" text-anchor="end">Updated at %s</text>
                           </svg>
                           """.formatted(
                           safeUsername,
