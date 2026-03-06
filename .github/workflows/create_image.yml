@@ -111,7 +111,10 @@ jobs:
 
                   List<JsonNode> events = fetchEvents(client, baseUrl, token, 8);
                   List<JsonNode> pushEvents = events.stream()
-                          .filter(e -> "pushed".equalsIgnoreCase(e.path("action_name").asText()))
+                          .filter(e -> {
+                              String actionName = e.path("action_name").asText("").toLowerCase();
+                              return actionName.startsWith("pushed");
+                          })
                           .filter(e -> e.path("author").path("username").asText("").equalsIgnoreCase(username)
                                   || e.path("author_username").asText("").equalsIgnoreCase(username)
                                   || e.path("author_id").asInt(-1) == userId)
