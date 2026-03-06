@@ -16,22 +16,22 @@
   <rect class="card" x="10" y="10" width="475" height="200" rx="14"/>
 
   <text class="title" x="28" y="42">GitLab Activity</text>
-  <text class="sub" x="28" y="64">backas (@backas)</text>
+  <text class="sub" x="28" y="64">@backas</text>
   <a href="https://git.sigcraft.net:8443/backas">
     <text class="link" x="28" y="84">Open profile</text>
   </a>
 
-  <text class="label" x="28" y="120">Commits (from push events)</text>
-  <text class="value" x="28" y="146">0</text>
+  <text class="label" x="28" y="120">Commits</text>
+  <text class="value" x="28" y="146">8354</text>
 
   <text class="label" x="190" y="120">Push Events</text>
-  <text class="value" x="190" y="146">0</text>
+  <text class="value" x="190" y="146">1309</text>
 
   <text class="label" x="330" y="120">Projects</text>
-  <text class="value" x="330" y="146">0</text>
+  <text class="value" x="330" y="146">12</text>
 
   <text class="label" x="28" y="180">Last Activity</text>
-  <text class="sub" x="28" y="198">No recent push activity</text>
+  <text class="sub" x="28" y="198">6d ago</text>
 
-  <text class="foot" x="315" y="198">Updated: 2026-03-06 19:50 UTC</text>
+  <text class="foot" x="315" y="198">Updated: 2026-03-06 20:07 UTC</text>
 </svg>
