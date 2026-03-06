@@ -72,10 +72,9 @@ jobs:
           cat > tools/src/main/java/GitLabStatsGenerator.java <<'EOF'
           import com.fasterxml.jackson.databind.JsonNode;
           import com.fasterxml.jackson.databind.ObjectMapper;
-
+          
           import java.io.IOException;
           import java.net.URI;
-          import java.net.URLEncoder;
           import java.net.http.HttpClient;
           import java.net.http.HttpRequest;
           import java.net.http.HttpResponse;
@@ -90,138 +89,173 @@ jobs:
           import java.util.ArrayList;
           import java.util.Comparator;
           import java.util.List;
-
+          
           public class GitLabStatsGenerator {
-
+          
               private static final ObjectMapper MAPPER = new ObjectMapper();
-
+          
               public static void main(String[] args) throws Exception {
                   String baseUrl = requireEnv("GITLAB_BASE_URL");
                   String token = requireEnv("GITLAB_TOKEN");
                   String username = requireEnv("GITLAB_USERNAME");
-
+          
                   HttpClient client = HttpClient.newBuilder()
                           .connectTimeout(Duration.ofSeconds(20))
                           .build();
-
-                  JsonNode user = fetchUser(client, baseUrl, token, username);
-                  int userId = user.path("id").asInt();
-                  String displayName = user.path("name").asText(username);
-                  String webUrl = user.path("web_url").asText(baseUrl);
-
-                  List<JsonNode> events = fetchEvents(client, baseUrl, token, 8);
+          
+                  List<JsonNode> events = fetchAllUserEvents(client, baseUrl, token, username);
+          
                   List<JsonNode> pushEvents = events.stream()
+                          .filter(GitLabStatsGenerator::isPushLikeEvent)
                           .filter(e -> {
-                              String actionName = e.path("action_name").asText("").toLowerCase();
-                              return actionName.startsWith("pushed");
+                              String authorUsername = e.path("author_username").asText("");
+                              String nestedAuthorUsername = e.path("author").path("username").asText("");
+                              return username.equalsIgnoreCase(authorUsername)
+                                      || username.equalsIgnoreCase(nestedAuthorUsername);
                           })
                           .toList();
-
+          
                   int pushEventCount = pushEvents.size();
+          
                   int commitCount = pushEvents.stream()
                           .mapToInt(e -> e.path("push_data").path("commit_count").asInt(0))
                           .sum();
-
+          
                   long distinctProjects = pushEvents.stream()
                           .map(e -> e.path("project_id").asLong(-1))
                           .filter(id -> id != -1)
                           .distinct()
                           .count();
-
+          
                   String lastActivity = pushEvents.stream()
-                          .map(e -> e.path("created_at").asText(null))
-                          .filter(v -> v != null && !v.isBlank())
+                          .map(e -> e.path("created_at").asText(""))
+                          .filter(s -> !s.isBlank())
                           .max(Comparator.naturalOrder())
                           .map(GitLabStatsGenerator::toRelativeTime)
                           .orElse("No recent push activity");
-
+          
+                  String profileUrl = baseUrl + "/" + username;
                   String generatedAt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm 'UTC'")
                           .withZone(ZoneOffset.UTC)
                           .format(Instant.now());
-
-                  String svg = buildSvg(displayName, username, webUrl, commitCount, pushEventCount, distinctProjects, lastActivity, generatedAt);
-
+          
+                  String svg = buildSvg(
+                          username,
+                          profileUrl,
+                          commitCount,
+                          pushEventCount,
+                          distinctProjects,
+                          lastActivity,
+                          generatedAt
+                  );
+          
                   Path output = Path.of("assets", "gitlab-stats.svg");
                   Files.createDirectories(output.getParent());
                   Files.writeString(output, svg, StandardCharsets.UTF_8);
+          
+                  System.out.println("Total events fetched: " + events.size());
+                  System.out.println("Push-like events: " + pushEventCount);
+                  System.out.println("Commits counted: " + commitCount);
+                  System.out.println("Projects counted: " + distinctProjects);
+                  System.out.println("Output written to: " + output.toAbsolutePath());
               }
-
-              private static JsonNode fetchUser(HttpClient client, String baseUrl, String token, String username) throws Exception {
-                  String encoded = URLEncoder.encode(username, StandardCharsets.UTF_8);
-                  String body = get(client, baseUrl, token, "/api/v4/users?username=" + encoded);
-                  JsonNode arr = MAPPER.readTree(body);
-                  if (!arr.isArray() || arr.isEmpty()) {
-                      throw new IllegalStateException("GitLab user not found: " + username);
-                  }
-                  return arr.get(0);
-              }
-
-              private static List<JsonNode> fetchEvents(HttpClient client, String baseUrl, String token, int pages) throws Exception {
+          
+              private static List<JsonNode> fetchAllUserEvents(HttpClient client, String baseUrl, String token, String username)
+                      throws Exception {
+          
                   List<JsonNode> all = new ArrayList<>();
-                  for (int page = 1; page <= pages; page++) {
-                      String body = get(
-                              client,
-                              baseUrl,
-                              token,
-                              "/api/v4/users/" + System.getenv(GITLAB_USERNAME) + "/events
-                      );
-
+          
+                  for (int page = 1; page <= 100; page++) {
+                      String path = "/api/v4/users/" + username + "/events?per_page=100&page=" + page;
+                      String body = get(client, baseUrl, token, path);
+          
                       JsonNode arr = MAPPER.readTree(body);
                       if (!arr.isArray() || arr.isEmpty()) {
                           break;
                       }
+          
                       arr.forEach(all::add);
+          
+                      if (arr.size() < 100) {
+                          break;
+                      }
                   }
+          
                   return all;
               }
-
-              private static String get(HttpClient client, String baseUrl, String token, String pathAndQuery) throws IOException, InterruptedException {
+          
+              private static boolean isPushLikeEvent(JsonNode event) {
+                  JsonNode pushData = event.path("push_data");
+                  if (pushData.isMissingNode() || pushData.isNull()) {
+                      return false;
+                  }
+          
+                  String actionName = event.path("action_name").asText("").toLowerCase();
+                  if (actionName.startsWith("pushed")) {
+                      return true;
+                  }
+          
+                  String pushAction = pushData.path("action").asText("").toLowerCase();
+                  return "pushed".equals(pushAction) || "created".equals(pushAction);
+              }
+          
+              private static String get(HttpClient client, String baseUrl, String token, String pathAndQuery)
+                      throws IOException, InterruptedException {
+          
                   HttpRequest request = HttpRequest.newBuilder()
                           .uri(URI.create(baseUrl + pathAndQuery))
                           .timeout(Duration.ofSeconds(30))
                           .header("PRIVATE-TOKEN", token)
                           .GET()
                           .build();
-
+          
                   HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+          
                   if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                      throw new IllegalStateException("GitLab API call failed: " + response.statusCode() + " / " + pathAndQuery + "\n" + response.body());
+                      throw new IllegalStateException(
+                              "GitLab API call failed: " + response.statusCode() + " / " + pathAndQuery + "\n" + response.body()
+                      );
                   }
+          
                   return response.body();
               }
-
+          
               private static String toRelativeTime(String isoTime) {
                   Instant then = OffsetDateTime.parse(isoTime).toInstant();
                   Duration duration = Duration.between(then, Instant.now());
-
+          
                   long days = duration.toDays();
-                  if (days > 0) return days + "d ago";
-
+                  if (days > 0) {
+                      return days + "d ago";
+                  }
+          
                   long hours = duration.toHours();
-                  if (hours > 0) return hours + "h ago";
-
+                  if (hours > 0) {
+                      return hours + "h ago";
+                  }
+          
                   long minutes = duration.toMinutes();
-                  if (minutes > 0) return minutes + "m ago";
-
+                  if (minutes > 0) {
+                      return minutes + "m ago";
+                  }
+          
                   return "just now";
               }
-
+          
               private static String buildSvg(
-                      String displayName,
                       String username,
-                      String webUrl,
+                      String profileUrl,
                       int commitCount,
                       int pushEventCount,
                       long distinctProjects,
                       String lastActivity,
                       String generatedAt
               ) {
-                  String safeDisplayName = escapeXml(displayName);
                   String safeUsername = escapeXml(username);
-                  String safeWebUrl = escapeXml(webUrl);
+                  String safeProfileUrl = escapeXml(profileUrl);
                   String safeLastActivity = escapeXml(lastActivity);
                   String safeGeneratedAt = escapeXml(generatedAt);
-
+          
                   return """
                           <svg width="495" height="220" viewBox="0 0 495 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
                             <title id="title">GitLab Stats</title>
@@ -236,35 +270,34 @@ jobs:
                               .foot { fill: #7d8590; font: 400 11px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
                               .link { fill: #58a6ff; font: 500 12px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
                             </style>
-
+          
                             <rect class="bg" x="0" y="0" width="495" height="220" rx="16"/>
                             <rect class="card" x="10" y="10" width="475" height="200" rx="14"/>
-
+          
                             <text class="title" x="28" y="42">GitLab Activity</text>
-                            <text class="sub" x="28" y="64">%s (@%s)</text>
+                            <text class="sub" x="28" y="64">@%s</text>
                             <a href="%s">
                               <text class="link" x="28" y="84">Open profile</text>
                             </a>
-
-                            <text class="label" x="28" y="120">Commits (from push events)</text>
+          
+                            <text class="label" x="28" y="120">Commits</text>
                             <text class="value" x="28" y="146">%d</text>
-
+          
                             <text class="label" x="190" y="120">Push Events</text>
                             <text class="value" x="190" y="146">%d</text>
-
+          
                             <text class="label" x="330" y="120">Projects</text>
                             <text class="value" x="330" y="146">%d</text>
-
+          
                             <text class="label" x="28" y="180">Last Activity</text>
                             <text class="sub" x="28" y="198">%s</text>
-
+          
                             <text class="foot" x="315" y="198">Updated: %s</text>
                           </svg>
                           """.formatted(
                           safeUsername,
-                          safeDisplayName,
                           safeUsername,
-                          safeWebUrl,
+                          safeProfileUrl,
                           commitCount,
                           pushEventCount,
                           distinctProjects,
@@ -272,7 +305,7 @@ jobs:
                           safeGeneratedAt
                   );
               }
-
+          
               private static String escapeXml(String s) {
                   return s.replace("&", "&amp;")
                           .replace("<", "&lt;")
@@ -280,7 +313,7 @@ jobs:
                           .replace("\"", "&quot;")
                           .replace("'", "&apos;");
               }
-
+          
               private static String requireEnv(String key) {
                   String value = System.getenv(key);
                   if (value == null || value.isBlank()) {
