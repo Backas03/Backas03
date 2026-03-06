@@ -18,10 +18,11 @@
     .project { fill: #3fb950; }
 
     .divider { stroke: #30363d; stroke-width: 1; }
-    .metaLabel { fill: #7d8590; font: 600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
-    .metaValue { fill: #c9d1d9; font: 400 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
 
-    .foot { fill: #7d8590; font: 400 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+    .metaLabel { fill: #7d8590; font: 600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+    .metaValue { fill: #c9d1d9; font: 400 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+
+    .foot { fill: #7d8590; font: 400 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
   </style>
 
   <!-- Background -->
@@ -34,26 +35,27 @@
 
   <!-- Stats -->
   <text class="label commit" x="28" y="104">Commits</text>
-  <text class="value" x="28" y="136">8354</text>
+  <text class="value" x="28" y="132">8354</text>
 
   <text class="label push" x="250" y="104">Push Events</text>
-  <text class="value" x="250" y="136">1309</text>
+  <text class="value" x="250" y="132">1309</text>
 
   <text class="label mr" x="28" y="170">Merge Requests</text>
-  <text class="value" x="28" y="202">165</text>
+  <text class="value" x="28" y="198">165</text>
 
   <text class="label project" x="250" y="170">Projects</text>
-  <text class="value" x="250" y="202">12</text>
+  <text class="value" x="250" y="198">12</text>
 
   <!-- Divider -->
-  <line class="divider" x1="28" y1="216" x2="467" y2="216"/>
+  <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
   <!-- Meta -->
-  <text class="metaLabel" x="28" y="236">Last commit:</text>
-  <text class="metaValue" x="105" y="236" style="font-size: 10px;">feat(wip): chat channel impl</text>
+  <text class="metaLabel" x="28" y="232">Last commit:</text>
+  <text class="metaValue" x="105" y="232">feat(wip): chat channel impl</text>
 
-  <text class="metaLabel" x="28" y="252">Last activity:</text>
-  <text class="metaValue" x="105" y="252" style="font-size: 10px;">6d ago</text>
+  <text class="metaLabel" x="28" y="248">Last activity:</text>
+  <text class="metaValue" x="105" y="248">6d ago</text>
 
-  <text class="foot" x="467" y="252" text-anchor="end">Updated At 2026-03-06 20:47 UTC</text>
+  <!-- Footer -->
+  <text class="foot" x="467" y="244" text-anchor="end">Updated at 2026-03-06 20:56 UTC</text>
 </svg>
