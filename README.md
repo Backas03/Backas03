@@ -1,21 +1,22 @@
-<a href="https://github.com/Backas03" target="_blank">
-    <img src="https://github-readme-stats.vercel.app/api?username=Backas03&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight" alt="Backas03's GitHub stats"/>
-<br/>
-<a href="https://github.com/Backas03" target="_blank">
-    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Backas03&layout=compact&show_icons=true&theme=tokyonight" alt="Top Langs"/>
-</a>
+# Welcome 👋
+I'm Backas03, a backend developer based in the Republic of Korea.
 
-<!--
-**Backas03/Backas03** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+## Language/Stacks
+https://img.shields.io/badge/Korean-8A2BE2
 
-Here are some ideas to get you started:
+## About
+* Backend-focused development
+* Interested in scalable systems and infrastructure
+* Developing and managing personal projects
+* Currently active mainly in Team Sigcraft (Beartown)
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## Current Status
+* Primary development repository: **Private GitLab**
+* **Using Private GitLab since:** 2024.07.01
+
+## Location
+Republic of Korea <br>
+UTC +09:00
+
+## Contact
+Email: [contact@vitamin.moe](mailto:contact@vitamin.moe)
