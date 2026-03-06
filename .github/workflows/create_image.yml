@@ -141,7 +141,7 @@ jobs:
 
                   String svg = buildSvg(displayName, username, webUrl, commitCount, pushEventCount, distinctProjects, lastActivity, generatedAt);
 
-                  Path output = Path.of("assets", "gitlab-stats.svg");
+                  Path output = Path.of("..", "assets", "gitlab-stats.svg");
                   Files.createDirectories(output.getParent());
                   Files.writeString(output, svg, StandardCharsets.UTF_8);
               }
