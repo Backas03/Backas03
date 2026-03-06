@@ -3,7 +3,7 @@ name: Update GitLab Stats
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *" # (UTC +9 기준 01시 정각)
+    - cron: "0 3 * * *"
 
 permissions:
   contents: write
