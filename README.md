@@ -18,5 +18,5 @@ UTC +09:00
 ## Contact
 Email: [contact@vitamin.moe](mailto:contact@vitamin.moe)
 
----
+## Activities
 ![GitLab Stats](assets/gitlab-stats.svg)
