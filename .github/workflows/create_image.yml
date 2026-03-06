@@ -109,7 +109,7 @@ jobs:
                   String displayName = user.path("name").asText(username);
                   String webUrl = user.path("web_url").asText(baseUrl);
 
-                  List<JsonNode> events = fetchEvents(client, baseUrl, token, 8); // 최근 페이지 여러 개
+                  List<JsonNode> events = fetchEvents(client, baseUrl, token, 8);
                   List<JsonNode> pushEvents = events.stream()
                           .filter(e -> "pushed".equalsIgnoreCase(e.path("action_name").asText()))
                           .filter(e -> e.path("author").path("username").asText("").equalsIgnoreCase(username)
