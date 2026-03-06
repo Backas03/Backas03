@@ -353,7 +353,7 @@ jobs:
                             <text class="metaLabel" x="28" y="252">Last activity</text>
                             <text class="metaValue" x="105" y="252" style="font-size: 10px;">%s</text>
                           
-                            <text class="foot" x="390" y="252" text-anchor="end">Updated %s</text>
+                            <text class="foot" x="467" y="252" text-anchor="end">Updated %s</text>
                           </svg>
                           """.formatted(
                           safeUsername,
