@@ -347,13 +347,13 @@ jobs:
                             <line class="divider" x1="28" y1="216" x2="467" y2="216"/>
                           
                             <!-- Meta -->
-                            <text class="metaLabel" x="28" y="236">Last commit</text>
+                            <text class="metaLabel" x="28" y="236">Last commit:</text>
                             <text class="metaValue" x="105" y="236" style="font-size: 10px;">%s</text>
                           
-                            <text class="metaLabel" x="28" y="252">Last activity</text>
+                            <text class="metaLabel" x="28" y="252">Last activity:</text>
                             <text class="metaValue" x="105" y="252" style="font-size: 10px;">%s</text>
                           
-                            <text class="foot" x="467" y="252" text-anchor="end">Updated at %s</text>
+                            <text class="foot" x="467" y="252" text-anchor="end">Updated At %s</text>
                           </svg>
                           """.formatted(
                           safeUsername,
