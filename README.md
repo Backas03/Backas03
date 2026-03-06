@@ -1,9 +1,6 @@
 # Welcome 👋
 I'm Backas03, a backend developer based in the Republic of Korea.
 
-## Language/Stacks
-https://img.shields.io/badge/Korean-8A2BE2
-
 ## About
 * Backend-focused development
 * Interested in scalable systems and infrastructure
