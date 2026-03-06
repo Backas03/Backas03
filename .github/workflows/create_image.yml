@@ -294,7 +294,6 @@ jobs:
                           """.formatted(
                           safeUsername,
                           safeUsername,
-                          safeProfileUrl,
                           commitCount,
                           pushEventCount,
                           distinctProjects,
