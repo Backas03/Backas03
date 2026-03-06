@@ -292,12 +292,11 @@ jobs:
           EOF
 
       - name: Generate SVG
-        working-directory: tools
         env:
           GITLAB_BASE_URL: ${{ secrets.GITLAB_BASE_URL }}
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
-        run: mvn -q -DskipTests compile exec:java
+        run: mvn -q -f tools/pom.xml -DskipTests compile exec:java
 
       - name: Commit updated SVG
         run: |
