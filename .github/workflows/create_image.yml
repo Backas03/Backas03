@@ -1,0 +1,313 @@
+name: Update GitLab Stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Prepare directories
+        run: |
+          mkdir -p tools/src/main/java
+          mkdir -p assets
+
+      - name: Write pom.xml
+        run: |
+          cat > tools/pom.xml <<'EOF'
+          <project xmlns="http://maven.apache.org/POM/4.0.0"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+              <modelVersion>4.0.0</modelVersion>
+              <groupId>net.vitamin</groupId>
+              <artifactId>gitlab-stats-generator</artifactId>
+              <version>1.0.0</version>
+
+              <properties>
+                  <maven.compiler.source>21</maven.compiler.source>
+                  <maven.compiler.target>21</maven.compiler.target>
+                  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+              </properties>
+
+              <dependencies>
+                  <dependency>
+                      <groupId>com.fasterxml.jackson.core</groupId>
+                      <artifactId>jackson-databind</artifactId>
+                      <version>2.17.2</version>
+                  </dependency>
+              </dependencies>
+
+              <build>
+                  <plugins>
+                      <plugin>
+                          <groupId>org.codehaus.mojo</groupId>
+                          <artifactId>exec-maven-plugin</artifactId>
+                          <version>3.3.0</version>
+                          <configuration>
+                              <mainClass>GitLabStatsGenerator</mainClass>
+                          </configuration>
+                      </plugin>
+                  </plugins>
+              </build>
+          </project>
+          EOF
+
+      - name: Write Java source
+        run: |
+          cat > tools/src/main/java/GitLabStatsGenerator.java <<'EOF'
+          import com.fasterxml.jackson.databind.JsonNode;
+          import com.fasterxml.jackson.databind.ObjectMapper;
+
+          import java.io.IOException;
+          import java.net.URI;
+          import java.net.URLEncoder;
+          import java.net.http.HttpClient;
+          import java.net.http.HttpRequest;
+          import java.net.http.HttpResponse;
+          import java.nio.charset.StandardCharsets;
+          import java.nio.file.Files;
+          import java.nio.file.Path;
+          import java.time.Duration;
+          import java.time.Instant;
+          import java.time.OffsetDateTime;
+          import java.time.ZoneOffset;
+          import java.time.format.DateTimeFormatter;
+          import java.util.ArrayList;
+          import java.util.Comparator;
+          import java.util.List;
+
+          public class GitLabStatsGenerator {
+
+              private static final ObjectMapper MAPPER = new ObjectMapper();
+
+              public static void main(String[] args) throws Exception {
+                  String baseUrl = requireEnv("GITLAB_BASE_URL");
+                  String token = requireEnv("GITLAB_TOKEN");
+                  String username = requireEnv("GITLAB_USERNAME");
+
+                  HttpClient client = HttpClient.newBuilder()
+                          .connectTimeout(Duration.ofSeconds(20))
+                          .build();
+
+                  JsonNode user = fetchUser(client, baseUrl, token, username);
+                  int userId = user.path("id").asInt();
+                  String displayName = user.path("name").asText(username);
+                  String webUrl = user.path("web_url").asText(baseUrl);
+
+                  List<JsonNode> events = fetchEvents(client, baseUrl, token, 8); // 최근 페이지 여러 개
+                  List<JsonNode> pushEvents = events.stream()
+                          .filter(e -> "pushed".equalsIgnoreCase(e.path("action_name").asText()))
+                          .filter(e -> e.path("author").path("username").asText("").equalsIgnoreCase(username)
+                                  || e.path("author_username").asText("").equalsIgnoreCase(username)
+                                  || e.path("author_id").asInt(-1) == userId)
+                          .toList();
+
+                  int pushEventCount = pushEvents.size();
+                  int commitCount = pushEvents.stream()
+                          .mapToInt(e -> e.path("push_data").path("commit_count").asInt(0))
+                          .sum();
+
+                  long distinctProjects = pushEvents.stream()
+                          .map(e -> e.path("project_id").asLong(-1))
+                          .filter(id -> id != -1)
+                          .distinct()
+                          .count();
+
+                  String lastActivity = pushEvents.stream()
+                          .map(e -> e.path("created_at").asText(null))
+                          .filter(v -> v != null && !v.isBlank())
+                          .max(Comparator.naturalOrder())
+                          .map(GitLabStatsGenerator::toRelativeTime)
+                          .orElse("No recent push activity");
+
+                  String generatedAt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm 'UTC'")
+                          .withZone(ZoneOffset.UTC)
+                          .format(Instant.now());
+
+                  String svg = buildSvg(displayName, username, webUrl, commitCount, pushEventCount, distinctProjects, lastActivity, generatedAt);
+
+                  Path output = Path.of("assets", "gitlab-stats.svg");
+                  Files.createDirectories(output.getParent());
+                  Files.writeString(output, svg, StandardCharsets.UTF_8);
+              }
+
+              private static JsonNode fetchUser(HttpClient client, String baseUrl, String token, String username) throws Exception {
+                  String encoded = URLEncoder.encode(username, StandardCharsets.UTF_8);
+                  String body = get(client, baseUrl, token, "/api/v4/users?username=" + encoded);
+                  JsonNode arr = MAPPER.readTree(body);
+                  if (!arr.isArray() || arr.isEmpty()) {
+                      throw new IllegalStateException("GitLab user not found: " + username);
+                  }
+                  return arr.get(0);
+              }
+
+              private static List<JsonNode> fetchEvents(HttpClient client, String baseUrl, String token, int pages) throws Exception {
+                  List<JsonNode> all = new ArrayList<>();
+                  for (int page = 1; page <= pages; page++) {
+                      String body = get(
+                              client,
+                              baseUrl,
+                              token,
+                              "/api/v4/events?action=pushed&sort=desc&scope=all&per_page=100&page=" + page
+                      );
+
+                      JsonNode arr = MAPPER.readTree(body);
+                      if (!arr.isArray() || arr.isEmpty()) {
+                          break;
+                      }
+                      arr.forEach(all::add);
+                  }
+                  return all;
+              }
+
+              private static String get(HttpClient client, String baseUrl, String token, String pathAndQuery) throws IOException, InterruptedException {
+                  HttpRequest request = HttpRequest.newBuilder()
+                          .uri(URI.create(baseUrl + pathAndQuery))
+                          .timeout(Duration.ofSeconds(30))
+                          .header("PRIVATE-TOKEN", token)
+                          .GET()
+                          .build();
+
+                  HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                  if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                      throw new IllegalStateException("GitLab API call failed: " + response.statusCode() + " / " + pathAndQuery + "\n" + response.body());
+                  }
+                  return response.body();
+              }
+
+              private static String toRelativeTime(String isoTime) {
+                  Instant then = OffsetDateTime.parse(isoTime).toInstant();
+                  Duration duration = Duration.between(then, Instant.now());
+
+                  long days = duration.toDays();
+                  if (days > 0) return days + "d ago";
+
+                  long hours = duration.toHours();
+                  if (hours > 0) return hours + "h ago";
+
+                  long minutes = duration.toMinutes();
+                  if (minutes > 0) return minutes + "m ago";
+
+                  return "just now";
+              }
+
+              private static String buildSvg(
+                      String displayName,
+                      String username,
+                      String webUrl,
+                      int commitCount,
+                      int pushEventCount,
+                      long distinctProjects,
+                      String lastActivity,
+                      String generatedAt
+              ) {
+                  String safeDisplayName = escapeXml(displayName);
+                  String safeUsername = escapeXml(username);
+                  String safeWebUrl = escapeXml(webUrl);
+                  String safeLastActivity = escapeXml(lastActivity);
+                  String safeGeneratedAt = escapeXml(generatedAt);
+
+                  return """
+                          <svg width="495" height="220" viewBox="0 0 495 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+                            <title id="title">GitLab Stats</title>
+                            <desc id="desc">GitLab stats card for %s</desc>
+                            <style>
+                              .bg { fill: #0d1117; }
+                              .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
+                              .title { fill: #e6edf3; font: 700 20px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
+                              .sub { fill: #9da7b3; font: 400 12px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
+                              .label { fill: #7d8590; font: 600 12px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
+                              .value { fill: #e6edf3; font: 700 22px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
+                              .foot { fill: #7d8590; font: 400 11px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
+                              .link { fill: #58a6ff; font: 500 12px -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif; }
+                            </style>
+
+                            <rect class="bg" x="0" y="0" width="495" height="220" rx="16"/>
+                            <rect class="card" x="10" y="10" width="475" height="200" rx="14"/>
+
+                            <text class="title" x="28" y="42">GitLab Activity</text>
+                            <text class="sub" x="28" y="64">%s (@%s)</text>
+                            <a href="%s">
+                              <text class="link" x="28" y="84">Open profile</text>
+                            </a>
+
+                            <text class="label" x="28" y="120">Commits (from push events)</text>
+                            <text class="value" x="28" y="146">%d</text>
+
+                            <text class="label" x="190" y="120">Push Events</text>
+                            <text class="value" x="190" y="146">%d</text>
+
+                            <text class="label" x="330" y="120">Projects</text>
+                            <text class="value" x="330" y="146">%d</text>
+
+                            <text class="label" x="28" y="180">Last Activity</text>
+                            <text class="sub" x="28" y="198">%s</text>
+
+                            <text class="foot" x="315" y="198">Updated: %s</text>
+                          </svg>
+                          """.formatted(
+                          safeUsername,
+                          safeDisplayName,
+                          safeUsername,
+                          safeWebUrl,
+                          commitCount,
+                          pushEventCount,
+                          distinctProjects,
+                          safeLastActivity,
+                          safeGeneratedAt
+                  );
+              }
+
+              private static String escapeXml(String s) {
+                  return s.replace("&", "&amp;")
+                          .replace("<", "&lt;")
+                          .replace(">", "&gt;")
+                          .replace("\"", "&quot;")
+                          .replace("'", "&apos;");
+              }
+
+              private static String requireEnv(String key) {
+                  String value = System.getenv(key);
+                  if (value == null || value.isBlank()) {
+                      throw new IllegalStateException("Missing environment variable: " + key);
+                  }
+                  return value;
+              }
+          }
+          EOF
+
+      - name: Generate SVG
+        working-directory: tools
+        env:
+          GITLAB_BASE_URL: ${{ secrets.GITLAB_BASE_URL }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
+        run: mvn -q -DskipTests compile exec:java
+
+      - name: Commit updated SVG
+        run: |
+          if git diff --quiet -- assets/gitlab-stats.svg; then
+            echo "No changes"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/gitlab-stats.svg
+          git commit -m "chore: update GitLab stats"
+          git push
