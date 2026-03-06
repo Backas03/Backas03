@@ -115,9 +115,6 @@ jobs:
                               String actionName = e.path("action_name").asText("").toLowerCase();
                               return actionName.startsWith("pushed");
                           })
-                          .filter(e -> e.path("author").path("username").asText("").equalsIgnoreCase(username)
-                                  || e.path("author_username").asText("").equalsIgnoreCase(username)
-                                  || e.path("author_id").asInt(-1) == userId)
                           .toList();
 
                   int pushEventCount = pushEvents.size();
@@ -166,7 +163,7 @@ jobs:
                               client,
                               baseUrl,
                               token,
-                              "/api/v4/events?action=pushed&sort=desc&scope=all&per_page=100&page=" + page
+                              "/api/v4/users/" + System.getenv(GITLAB_USERNAME) + "/events
                       );
 
                       JsonNode arr = MAPPER.readTree(body);
