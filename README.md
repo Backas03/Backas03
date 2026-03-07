@@ -1,6 +1,3 @@
-# Welcome 👋
-I'm Backas, a backend developer based in the Republic of Korea.
-
 ## About
 * Backend-focused development
 * Interested in scalable systems and infrastructure
