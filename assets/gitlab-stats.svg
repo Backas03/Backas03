@@ -32,13 +32,13 @@
   <text class="sub" x="28" y="64">@backas</text>
 
   <text class="label commit" x="28" y="104">Commits</text>
-  <text class="value" x="28" y="132">9180</text>
+  <text class="value" x="28" y="132">9208</text>
 
   <text class="label push" x="250" y="104">Push Events</text>
-  <text class="value" x="250" y="132">1357</text>
+  <text class="value" x="250" y="132">1362</text>
 
   <text class="label mr" x="28" y="170">Merge Requests</text>
-  <text class="value" x="28" y="198">173</text>
+  <text class="value" x="28" y="198">175</text>
 
   <text class="label project" x="250" y="170">Projects</text>
   <text class="value" x="250" y="198">12</text>
@@ -46,10 +46,10 @@
   <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
   <text class="metaLabel" x="28" y="232">Last commit:</text>
-  <text class="metaValue" x="105" y="232">fix: 첫 init 시 using flag 잘못처리되는 버그 해결</text>
+  <text class="metaValue" x="105" y="232">feat: add using player info</text>
 
   <text class="metaLabel" x="28" y="248">Last activity:</text>
-  <text class="metaValue" x="105" y="248">13h ago</text>
+  <text class="metaValue" x="105" y="248">17h ago</text>
 
-  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-04-20 05:44 UTC</text>
+  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-04-21 05:30 UTC</text>
 </svg>
