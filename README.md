@@ -2,7 +2,7 @@
 * Backend-focused development
 * Interested in scalable systems and infrastructure
 * Developing and managing personal projects
-* Currently active mainly in Team Sigcraft (Beartown)
+* Currently active mainly in Team Sigcraft
 
 ## Current Status
 * Primary development repository: **Private GitLab**
