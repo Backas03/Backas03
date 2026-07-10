@@ -32,13 +32,13 @@
   <text class="sub" x="28" y="64">@backas</text>
 
   <text class="label commit" x="28" y="104">Commits</text>
-  <text class="value" x="28" y="132">9865</text>
+  <text class="value" x="28" y="132">9867</text>
 
   <text class="label push" x="250" y="104">Push Events</text>
-  <text class="value" x="250" y="132">1418</text>
+  <text class="value" x="250" y="132">1420</text>
 
   <text class="label mr" x="28" y="170">Merge Requests</text>
-  <text class="value" x="28" y="198">181</text>
+  <text class="value" x="28" y="198">182</text>
 
   <text class="label project" x="250" y="170">Projects</text>
   <text class="value" x="250" y="198">12</text>
@@ -46,10 +46,10 @@
   <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
   <text class="metaLabel" x="28" y="232">Last commit:</text>
-  <text class="metaValue" x="105" y="232">fix: enhance channel permissions and ad...</text>
+  <text class="metaValue" x="105" y="232">fix: 기계 재료 최대 투입량이 레시피 최대치를 초과하는 문제 수정</text>
 
   <text class="metaLabel" x="28" y="248">Last activity:</text>
-  <text class="metaValue" x="105" y="248">1d ago</text>
+  <text class="metaValue" x="105" y="248">16h ago</text>
 
-  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-07-09 06:48 UTC</text>
+  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-07-10 06:48 UTC</text>
 </svg>
