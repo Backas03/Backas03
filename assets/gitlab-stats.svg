@@ -32,24 +32,24 @@
   <text class="sub" x="28" y="64">@backas</text>
 
   <text class="label commit" x="28" y="104">Commits</text>
-  <text class="value" x="28" y="132">9887</text>
+  <text class="value" x="28" y="132">9890</text>
 
   <text class="label push" x="250" y="104">Push Events</text>
-  <text class="value" x="250" y="132">1423</text>
+  <text class="value" x="250" y="132">1425</text>
 
   <text class="label mr" x="28" y="170">Merge Requests</text>
-  <text class="value" x="28" y="198">183</text>
+  <text class="value" x="28" y="198">184</text>
 
   <text class="label project" x="250" y="170">Projects</text>
-  <text class="value" x="250" y="198">12</text>
+  <text class="value" x="250" y="198">13</text>
 
   <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
   <text class="metaLabel" x="28" y="232">Last commit:</text>
-  <text class="metaValue" x="105" y="232">fix: chat channel stabilization — cross...</text>
+  <text class="metaValue" x="105" y="232">Add SigScore base: api + core (ranking/...</text>
 
   <text class="metaLabel" x="28" y="248">Last activity:</text>
-  <text class="metaValue" x="105" y="248">6d ago</text>
+  <text class="metaValue" x="105" y="248">5h ago</text>
 
-  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-07-20 06:20 UTC</text>
+  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-07-21 05:53 UTC</text>
 </svg>
