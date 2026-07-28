@@ -32,10 +32,10 @@
   <text class="sub" x="28" y="64">@backas</text>
 
   <text class="label commit" x="28" y="104">Commits</text>
-  <text class="value" x="28" y="132">9899</text>
+  <text class="value" x="28" y="132">9905</text>
 
   <text class="label push" x="250" y="104">Push Events</text>
-  <text class="value" x="250" y="132">1429</text>
+  <text class="value" x="250" y="132">1430</text>
 
   <text class="label mr" x="28" y="170">Merge Requests</text>
   <text class="value" x="28" y="198">185</text>
@@ -46,10 +46,10 @@
   <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
   <text class="metaLabel" x="28" y="232">Last commit:</text>
-  <text class="metaValue" x="105" y="232">feat: add Korean localization messages ...</text>
+  <text class="metaValue" x="105" y="232">refactor: SigCommand 서브커맨드를 별도 클래스로 분리</text>
 
   <text class="metaLabel" x="28" y="248">Last activity:</text>
-  <text class="metaValue" x="105" y="248">1d ago</text>
+  <text class="metaValue" x="105" y="248">11h ago</text>
 
-  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-07-27 06:32 UTC</text>
+  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-07-28 05:48 UTC</text>
 </svg>
