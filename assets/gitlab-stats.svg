@@ -32,13 +32,13 @@
   <text class="sub" x="28" y="64">@backas</text>
 
   <text class="label commit" x="28" y="104">Commits</text>
-  <text class="value" x="28" y="132">10115</text>
+  <text class="value" x="28" y="132">10155</text>
 
   <text class="label push" x="250" y="104">Push Events</text>
-  <text class="value" x="250" y="132">1456</text>
+  <text class="value" x="250" y="132">1462</text>
 
   <text class="label mr" x="28" y="170">Merge Requests</text>
-  <text class="value" x="28" y="198">199</text>
+  <text class="value" x="28" y="198">202</text>
 
   <text class="label project" x="250" y="170">Projects</text>
   <text class="value" x="250" y="198">13</text>
@@ -46,10 +46,10 @@
   <line class="divider" x1="28" y1="214" x2="467" y2="214"/>
 
   <text class="metaLabel" x="28" y="232">Last commit:</text>
-  <text class="metaValue" x="105" y="232">fix: register packet indexes on plugin ...</text>
+  <text class="metaValue" x="105" y="232">feat: 팀 시즌 정산 시 실제 팀 구성원에게만 보상 지급</text>
 
   <text class="metaLabel" x="28" y="248">Last activity:</text>
-  <text class="metaValue" x="105" y="248">2d ago</text>
+  <text class="metaValue" x="105" y="248">3h ago</text>
 
-  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-08-28 15:07 UTC</text>
+  <text class="foot" x="467" y="251" text-anchor="end">Updated at 2026-08-29 09:50 UTC</text>
 </svg>
